@@ -1,0 +1,4 @@
+fighterStaminaReduction=15
+fighterFinisherReduction=50
+fighterSignatureReduction=25
+supportSignatureReduction=20

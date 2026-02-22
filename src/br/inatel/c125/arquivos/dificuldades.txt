@@ -1,3 +1,0 @@
-Facil,0,0
-Medio,3,10
-Dificil,5,15

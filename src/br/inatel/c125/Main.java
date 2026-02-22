@@ -1,8 +1,8 @@
 package br.inatel.c125;
 
-import br.inatel.c125.outros.Configuracoes;
-import br.inatel.c125.personagens.Juiz;
-import br.inatel.c125.personagens.Lutador;
+import br.inatel.c125.characters.Fighter;
+import br.inatel.c125.characters.Referee;
+import br.inatel.c125.general.Settings;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,193 +17,193 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            Configuracoes.defineConfiguracoes();
+            Settings.setSettings();
 
-            int continuacao;
-            Scanner teclado = new Scanner(System.in);
+            int playAgain;
+            Scanner scanner = new Scanner(System.in);
 
             do {
 
-                Lutador jogador, inimigo;
+                Fighter player, enemy;
 
-                System.out.println("\n...................................... Seleção de Personagens ......................................");
-
-                try {
-
-                    String[] parametros = Configuracoes.escolheLutador(teclado);
-
-                    String nome;
-                    int altura, peso, estamina, forca;
-                    boolean suporte;
-
-                    nome = parametros[0];
-                    altura = Integer.parseInt(parametros[1]);
-                    peso = Integer.parseInt(parametros[2]);
-                    estamina = Integer.parseInt(parametros[3]);
-                    forca = Integer.parseInt(parametros[4]);
-                    suporte = Boolean.parseBoolean(parametros[5]);
-
-                    jogador = new Lutador(nome, altura, peso, estamina - Configuracoes.getModificadorEstamina(), forca - Configuracoes.getModificadorForca(), suporte);
-
-                    System.out.println("\nLutador " + nome + " selecionado");
-
-                } catch (IOException e) {
-                    System.out.println("Erro: Não foi possível selecionar jogador. Reinicie o jogo e tente novamente");
-                    break;
-                }
+                System.out.println("\n...................................... Character Selection ......................................");
 
                 try {
 
-                    String[] parametros = Configuracoes.escolheLutador(teclado);
-
-                    String nome;
-                    int altura, peso, estamina, forca;
-                    boolean suporte;
-
-                    nome = parametros[0];
-                    altura = Integer.parseInt(parametros[1]);
-                    peso = Integer.parseInt(parametros[2]);
-                    estamina = Integer.parseInt(parametros[3]);
-                    forca = Integer.parseInt(parametros[4]);
-                    suporte = Boolean.parseBoolean(parametros[5]);
-
-                    inimigo = new Lutador(nome, altura, peso, estamina + Configuracoes.getModificadorEstamina(), forca + Configuracoes.getModificadorForca(), suporte);
-
-                    System.out.println("\nInimigo " + nome + " selecionado\n");
-
-                } catch (IOException e) {
-                    System.out.println("Erro: Não foi possível selecionar inimigo. Reinicie o jogo e tente novamente");
-                    break;
-                }
-
-                System.out.println("...................................... Seleção de Dificuldade ......................................");
-
-                try {
-                    Configuracoes.defineDificuldade(teclado);
-                } catch (IOException e) {
-                    System.out.println("Erro: Não foi possível definir dificuldade. Reinicie o jogo e tente novamente");
-                    break;
-                }
-
-                Juiz juiz;
-
-                try {
-                    Path arquivoSuporte = Paths.get("src/br/inatel/c125/arquivos/padroes/juiz_padrao.txt");
-
-                    String[] parametros = Files.readAllLines(arquivoSuporte).get(0).split(",");
+                    String[] parameters = Settings.chooseFighter(scanner);
 
                     String name;
-                    int hight, weight;
+                    int height, weight, stamina, strength;
+                    boolean support;
 
-                    name = parametros[0];
-                    hight = Integer.parseInt(parametros[1]);
-                    weight = Integer.parseInt(parametros[2]);
+                    name = parameters[0];
+                    height = Integer.parseInt(parameters[1]);
+                    weight = Integer.parseInt(parameters[2]);
+                    stamina = Integer.parseInt(parameters[3]);
+                    strength = Integer.parseInt(parameters[4]);
+                    support = Boolean.parseBoolean(parameters[5]);
 
-                    juiz = new Juiz(name, hight, weight);
+                    player = new Fighter(name, height, weight, stamina - Settings.getStaminaModifier(), strength - Settings.getStrengthModifier(), support);
+
+                    System.out.println("\nFighter " + name + " selected");
 
                 } catch (IOException e) {
-                    System.out.println("Erro: Não foi possível criar juiz. Reinicie o jogo e tente novamente");
+                    System.out.println("Error: Could not select player. Restart the game and try again.");
+                    break;
+                }
+
+                try {
+
+                    String[] parameters = Settings.chooseFighter(scanner);
+
+                    String name;
+                    int height, weight, stamina, strength;
+                    boolean support;
+
+                    name = parameters[0];
+                    height = Integer.parseInt(parameters[1]);
+                    weight = Integer.parseInt(parameters[2]);
+                    stamina = Integer.parseInt(parameters[3]);
+                    strength = Integer.parseInt(parameters[4]);
+                    support = Boolean.parseBoolean(parameters[5]);
+
+                    enemy = new Fighter(name, height, weight, stamina + Settings.getStaminaModifier(), strength + Settings.getStrengthModifier(), support);
+
+                    System.out.println("\nEnemy " + name + " selected\n");
+
+                } catch (IOException e) {
+                    System.out.println("Error: Could not select enemy. Restart the game and try again.");
+                    break;
+                }
+
+                System.out.println("...................................... Difficulty Selection ......................................");
+
+                try {
+                    Settings.setDifficulty(scanner);
+                } catch (IOException e) {
+                    System.out.println("Error: Could not set difficulty. Restart the game and try again.");
+                    break;
+                }
+
+                Referee referee;
+
+                try {
+                    Path supportFile = Paths.get("src/br/inatel/c125/files/standards/referee.txt");
+
+                    String[] parameters = Files.readAllLines(supportFile).get(0).split(",");
+
+                    String name;
+                    int height, weight;
+
+                    name = parameters[0];
+                    height = Integer.parseInt(parameters[1]);
+                    weight = Integer.parseInt(parameters[2]);
+
+                    referee = new Referee(name, height, weight);
+
+                } catch (IOException e) {
+                    System.out.println("Error: Could not create referee. Restart the game and try again.");
                     break;
                 }
 
                 Random r = new Random();
 
-                System.out.println("\nIniciando partida...\n");
+                System.out.println("\nStarting match...\n");
 
-                System.out.println("............................................ Simulação .............................................\n");
+                System.out.println("............................................ Simulation ............................................\n");
 
-                while ((jogador.getVida() > 0) && (inimigo.getVida() > 0)) {
+                while ((player.getHealth() > 0) && (enemy.getHealth() > 0)) {
 
-                    int escolha = r.nextInt(0, 54);
+                    int choice = r.nextInt(0, 54);
 
-                    switch (escolha) {
+                    switch (choice) {
                         case 0, 1, 2, 3, 4, 5, 6, 7 -> {
-                            jogador.correr();
-                            jogador.chutar(inimigo);
+                            player.run();
+                            player.kick(enemy);
                         }
 
                         case 8, 9, 10, 11, 12, 13, 14, 15 -> {
-                            jogador.pular();
-                            jogador.socar(inimigo);
+                            player.jump();
+                            player.punch(enemy);
                         }
 
                         case 16, 17, 18 -> {
-                            jogador.signature(inimigo);
-                            jogador.fazerPin(inimigo, juiz);
+                            player.signature(enemy);
+                            player.pin(enemy, referee);
                         }
 
                         case 19 -> {
-                            jogador.finisher(inimigo);
-                            jogador.fazerPin(inimigo, juiz);
+                            player.finisher(enemy);
+                            player.pin(enemy, referee);
                         }
 
                         case 20 -> {
-                            jogador.pular();
-                            jogador.chutar(juiz);
-                            juiz.desclassificarLutador(jogador);
+                            player.jump();
+                            player.kick(referee);
+                            referee.disqualifyFighter(player);
                         }
 
-                        case 21, 22 -> jogador.comeback();
+                        case 21, 22 -> player.comeback();
 
                         case 23, 24 -> {
                             try {
-                                jogador.getSuporte().atrapalhar(inimigo);
+                                player.getSupport().interfere(enemy);
                             } catch (NullPointerException e) {
-                                jogador.provocarInimigo();
+                                player.tauntEnemy();
                             }
                         }
 
                         case 25, 26 -> {
                             try {
-                                jogador.getSuporte().signature(inimigo);
-                                juiz.expulsarSuporte(jogador);
+                                player.getSupport().signature(enemy);
+                                referee.ejectSupport(player);
                             } catch (NullPointerException e) {
-                                jogador.interagirComPlateia();
+                                player.interactWithCrowd();
                             }
                         }
 
                         case 27, 28, 29, 30, 31, 32, 33, 34 -> {
-                            inimigo.correr();
-                            inimigo.socar(jogador);
+                            enemy.run();
+                            enemy.punch(player);
                         }
 
                         case 35, 36, 37, 38, 39, 40, 41, 42 -> {
-                            inimigo.pular();
-                            inimigo.chutar(jogador);
+                            enemy.jump();
+                            enemy.kick(player);
                         }
 
                         case 43, 44, 45 -> {
-                            inimigo.signature(jogador);
-                            inimigo.fazerPin(jogador, juiz);
+                            enemy.signature(player);
+                            enemy.pin(player, referee);
                         }
 
                         case 46 -> {
-                            inimigo.finisher(jogador);
-                            inimigo.fazerPin(jogador, juiz);
+                            enemy.finisher(player);
+                            enemy.pin(player, referee);
                         }
 
                         case 47 -> {
-                            inimigo.pular();
-                            inimigo.socar(juiz);
-                            juiz.desclassificarLutador(inimigo);
+                            enemy.jump();
+                            enemy.punch(referee);
+                            referee.disqualifyFighter(enemy);
                         }
 
-                        case 48, 49 -> inimigo.comeback();
+                        case 48, 49 -> enemy.comeback();
 
                         case 50, 51 -> {
                             try {
-                                inimigo.getSuporte().atrapalhar(jogador);
+                                enemy.getSupport().interfere(player);
                             } catch (NullPointerException e) {
-                                inimigo.provocarInimigo();
+                                enemy.tauntEnemy();
                             }
                         }
 
                         case 52, 53 -> {
                             try {
-                                inimigo.getSuporte().signature(jogador);
-                                juiz.expulsarSuporte(inimigo);
+                                enemy.getSupport().signature(player);
+                                referee.ejectSupport(enemy);
                             } catch (NullPointerException e) {
-                                inimigo.interagirComPlateia();
+                                enemy.interactWithCrowd();
                             }
                         }
                     }
@@ -218,33 +218,34 @@ public class Main {
 
                 }
 
-                if (inimigo.getVida() == -1) {
-                    System.out.println("Que pena, você venceu !!");
-                } else if (jogador.getVida() == -1) {
-                    System.out.println("Parabéns, você perdeu !!");
-                } else if (jogador.getVida() == 0) {
-                    inimigo.fazerPin(jogador, juiz);
-                    System.out.println("\nParabéns, você perdeu !!");
+                if (enemy.getHealth() == -1) {
+                    System.out.println("What a shame, you won!!");
+                } else if (player.getHealth() == -1) {
+                    System.out.println("Congratulations, you lost!!");
+                } else if (player.getHealth() == 0) {
+                    enemy.pin(player, referee);
+                    System.out.println("\nCongratulations, you lost!!");
                 } else {
-                    jogador.fazerPin(inimigo, juiz);
-                    System.out.println("\nQue pena, você venceu !!");
+                    player.pin(enemy, referee);
+                    System.out.println("\nWhat a shame, you won!!");
                 }
 
 
                 do {
-                    System.out.println("\nDeseja Jogar novamente?");
-                    System.out.println(" [0] Não ");
-                    System.out.println(" [1] Sim ");
-                    System.out.print("\nEscolha: ");
-                    continuacao = teclado.nextInt();
-                } while ((continuacao > 1) || (continuacao < 0));
+                    System.out.println("\nDo you want to play again?");
+                    System.out.println(" [0] No ");
+                    System.out.println(" [1] Yes ");
+                    System.out.print("\nChoice: ");
+                    playAgain = scanner.nextInt();
+                } while ((playAgain > 1) || (playAgain < 0));
 
-            } while (continuacao == 1);
+            } while (playAgain == 1);
 
-            teclado.close();
+            scanner.close();
 
         } catch (IOException e) {
-            System.out.println("Não foi possível inicializar o jogo. Tente Novamente");
+            System.out.println("Could not initialize the game. Please try again.");
+            System.out.println(e);
         }
     }
 }

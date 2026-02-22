@@ -1,4 +1,0 @@
-reducaoEstaminaLutador=15
-reducaoFinisherLutador=50
-reducaoSignatureLutador=25
-reducaoSignatureSuporte=20
